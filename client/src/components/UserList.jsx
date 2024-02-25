@@ -1,6 +1,6 @@
-import { ChatState } from "../../Context/ChatProvider";
+import { ChatState } from "../context/ChatProvider";
 
-const UserListItem = ({ handleFunction }) => {
+const UserList = ({ handleFunction }) => {
   const { user } = ChatState();
 
   return (

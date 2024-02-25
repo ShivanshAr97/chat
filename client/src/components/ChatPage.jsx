@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ChatState } from "../context/ChatProvider";
 import SideSearch from "./SideSearch";
-import AllChats from "./AllChats";
+import AllChats from "./MyChats";
 import SingleChat from "./SingleChat";
 
 const Chatpage = () => {

@@ -1,11 +1,11 @@
 import axios from "axios";
 import { useState } from "react";
-// import { ChatState } from "../context/ChatProvider.jsx";
+import { ChatState } from "../context/ChatProvider.jsx";
 import UserBadgeItem from "../components/UserBadge";
   import UserListItem from "../components/UserList";
 
-const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+const UpdateModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [groupChatName, setGroupChatName] = useState();
   const [search, setSearch] = useState("");
   const [searchResult, setSearchResult] = useState([]);
@@ -87,7 +87,7 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
         },
       };
       const { data } = await axios.put(
-        `/api/chat/groupadd`,
+        `/api/chat/add`,
         {
           chatId: selectedChat._id,
           userId: user1._id,
@@ -119,7 +119,7 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
         },
       };
       const { data } = await axios.put(
-        `/api/chat/groupremove`,
+        `/api/chat/remove`,
         {
           chatId: selectedChat._id,
           userId: user1._id,
@@ -137,81 +137,99 @@ const UpdateGroupChatModal = ({ fetchMessages, fetchAgain, setFetchAgain }) => {
     }
     setGroupChatName("");
   };
-
+  function onOpen() {
+    setIsOpen(true);
+  }
+  function onClose(){
+    setIsOpen(false)
+  }
   return (
     <>
-      <IconButton d={{ base: "flex" }} icon={<ViewIcon />} onClick={onOpen} />
+      <button className="flex" onClick={onOpen}>View</button>
 
-      <Modal onClose={onClose} isOpen={isOpen} isCentered>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader
-            fontSize="35px"
-            fontFamily="Work sans"
-            d="flex"
-            justifyContent="center"
-          >
-            {selectedChat.chatName}
-          </ModalHeader>
+      {isOpen && (
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
 
-          <ModalCloseButton />
-          <ModalBody d="flex" flexDir="column" alignItems="center">
-            <Box w="100%" d="flex" flexWrap="wrap" pb={3}>
-              {selectedChat.users.map((u) => (
-                <UserBadgeItem
-                  key={u._id}
-                  user={u}
-                  admin={selectedChat.groupAdmin}
-                  handleFunction={() => handleRemove(u)}
+            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+              &#8203;
+            </span>
+
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <h3 className="text-lg font-medium leading-6 text-gray-900">
+                  {selectedChat.chatName}
+                </h3>
+
+                <button className="absolute top-2 right-2" onClick={onClose}>
+                  X
+                </button>
+
+                <div className="flex flex-wrap pb-3">
+                  {selectedChat.users.map((u) => (
+                    <UserBadgeItem
+                      key={u._id}
+                      user={u}
+                      admin={selectedChat.groupAdmin}
+                      handleFunction={() => handleRemove(u)}
+                    />
+                  ))}
+                </div>
+
+                <div className="flex">
+                  <input
+                    type="text"
+                    placeholder="Chat Name"
+                    className="border p-2 mb-3 w-full"
+                    value={groupChatName}
+                    onChange={(e) => setGroupChatName(e.target.value)}
+                  />
+                  <button
+                    className="px-4 py-2 bg-teal-500 text-white ml-1"
+                    disabled={renameloading}
+                    onClick={handleRename}
+                  >
+                    Update
+                  </button>
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Add User to Group"
+                  className="border p-2 mb-1 w-full"
+                  onChange={(e) => handleSearch(e.target.value)}
                 />
-              ))}
-            </Box>
-            <FormControl d="flex">
-              <Input
-                placeholder="Chat Name"
-                mb={3}
-                value={groupChatName}
-                onChange={(e) => setGroupChatName(e.target.value)}
-              />
-              <Button
-                variant="solid"
-                colorScheme="teal"
-                ml={1}
-                isLoading={renameloading}
-                onClick={handleRename}
-              >
-                Update
-              </Button>
-            </FormControl>
-            <FormControl>
-              <Input
-                placeholder="Add User to group"
-                mb={1}
-                onChange={(e) => handleSearch(e.target.value)}
-              />
-            </FormControl>
 
-            {loading ? (
-              <Spinner size="lg" />
-            ) : (
-              searchResult?.map((user) => (
-                <UserListItem
-                  key={user._id}
-                  user={user}
-                  handleFunction={() => handleAddUser(user)}
-                />
-              ))
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button onClick={() => handleRemove(user)} colorScheme="red">
-              Leave Group
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+                {loading ? (
+                  <div className="animate-spin h-5 w-5 border-t-2 border-blue-500 border-solid mx-auto mb-2"></div>
+                ) : (
+                  searchResult?.map((user) => (
+                    <UserListItem
+                      key={user._id}
+                      user={user}
+                      handleFunction={() => handleAddUser(user)}
+                    />
+                  ))
+                )}
+              </div>
+
+              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <button
+                  onClick={() => handleRemove(user)}
+                  className="w-full inline-flex justify-center rounded-md border border-red-500 shadow-sm px-4 py-2 bg-red-500 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                >
+                  Leave Group
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
 
-export default UpdateGroupChatModal;
+export default UpdateModal;

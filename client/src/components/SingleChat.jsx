@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { getSender, getSenderFull } from "../assets/chatLogics.js";
-import axios from axios
+import axios from "axios";
 import SingleModal from "../components/SingleModal.jsx"
 import Scroll from "../components/Scroll.jsx"
-import io from 'socket.io-client'
+import { io } from 'socket.io-client'
 import UpdateModal from '../components/UpdateModal.jsx'
 import { ChatState } from '../context/ChatProvider.jsx'
 const ENDPOINT = "https://localhost:5000"
+var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [messages, setMessages] = useState([]);
@@ -71,8 +72,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       }
     }
   };
+  const socket = io('http://localhost:5000')
   useEffect(() => {
-    socket = io(ENDPOINT);
+    
     socket.emit("setup", user);
     socket.on("connected", () => setSocketConnected(true));
     socket.on("typing", () => setIsTyping(true));
@@ -140,7 +142,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             ) : (
               <>
                 {selectedChat.chatName.toUpperCase()}
-                <UpdateGroupChatModal
+                <UpdateModal
                   fetchMessages={fetchMessages}
                   fetchAgain={fetchAgain}
                   setFetchAgain={setFetchAgain}
@@ -148,17 +150,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               </>
             ))}
           {loading ? (
-            <Spinner />
+            <p>Loading</p>
           ) : (
             <div className="messages">
-              <ScrollableChat messages={messages} />
+              <Scroll messages={messages} />
             </div>
           )}
 
-          <FormControl
+          <div
             onKeyDown={sendMessage}
             id="first-name"
-            isRequired
           >
             {istyping ? (
               <div>
@@ -167,12 +168,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             ) : (
               <></>
             )}
-            <Input
+            <input
               placeholder="Enter a message.."
               value={newMessage}
               onChange={typingHandler}
             />
-          </FormControl>
+          </div>
         </>
       ) : (
         <p>Click on a user to start chatting</p>

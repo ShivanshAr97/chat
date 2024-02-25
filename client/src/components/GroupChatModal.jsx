@@ -1,10 +1,11 @@
   import axios from "axios";
   import { useState } from "react";
-//   import { ChatState } from "../context/ChatProvider";
+  import { ChatState } from "../context/ChatProvider";
   import UserBadgeItem from "../components/UserBadge";
   import UserListItem from "../components/UserList";
   
   const GroupChatModal = ({ children }) => {
+    const [isOpen, setIsOpen] = useState(false);
     const [groupChatName, setGroupChatName] = useState();
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [search, setSearch] = useState("");
@@ -67,7 +68,7 @@
           },
         };
         const { data } = await axios.post(
-          `/api/chat/group`,
+          `/api/chat/creategroup`,
           {
             name: groupChatName,
             users: JSON.stringify(selectedUsers.map((u) => u._id)),
@@ -82,64 +83,81 @@
       }
     };
   
+    function onOpen() {
+      setIsOpen(true);
+    }
+    function onClose(){
+      setIsOpen(false)
+    }
+  
     return (
       <>
-        <span onClick={onOpen}>{children}</span>
-  
-        <Modal onClose={onClose} isOpen={isOpen} isCentered>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>
-              Create Group Chat
-            </ModalHeader>
-            <ModalCloseButton />
-            <ModalBody d="flex" flexDir="column" alignItems="center">
-              <FormControl>
-                <Input
-                  placeholder="Chat Name"
-                  mb={3}
-                  onChange={(e) => setGroupChatName(e.target.value)}
-                />
-              </FormControl>
-              <FormControl>
-                <Input
-                  placeholder="Add Users eg: John, Piyush, Jane"
-                  mb={1}
-                  onChange={(e) => handleSearch(e.target.value)}
-                />
-              </FormControl>
-              <Box w="100%" d="flex" flexWrap="wrap">
-                {selectedUsers.map((u) => (
-                  <UserBadgeItem
-                    key={u._id}
-                    user={u}
-                    handleFunction={() => handleDelete(u)}
+      <span onClick={onOpen}>{children}</span>
+
+      {/* Replace Chakra UI Modal components with Tailwind CSS */}
+      <div className={`fixed inset-0 overflow-y-auto ${isOpen ? "block" : "hidden"}`}>
+        <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+          <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+          </div>
+
+          <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">
+            &#8203;
+          </span>
+
+          <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <h3 className="text-lg font-medium leading-6 text-gray-900">Create Group Chat</h3>
+
+              <div className="mt-3 sm:mt-0 sm:ml-4 sm:text-left">
+                
+                  <input
+                    type="text"
+                    placeholder="Chat Name"
+                    className="border p-2 mb-3 w-full"
+                    onChange={(e) => setGroupChatName(e.target.value)}
                   />
-                ))}
-              </Box>
-              {loading ? (
-                // <ChatLoading />
-                <div>Loading...</div>
-              ) : (
-                searchResult
-                  ?.slice(0, 4)
-                  .map((user) => (
-                    <UserListItem
-                      key={user._id}
-                      user={user}
-                      handleFunction={() => handleGroup(user)}
-                    />
-                  ))
-              )}
-            </ModalBody>
-            <ModalFooter>
-              <Button onClick={handleSubmit} colorScheme="blue">
+                  <input
+                    type="text"
+                    placeholder="Add Users eg: John, Piyush, Jane"
+                    className="border p-2 mb-1 w-full"
+                    onChange={(e) => handleSearch(e.target.value)}
+                  />
+                <div className="w-full flex flex-wrap">
+                  {selectedUsers.map((u) => (
+                    <div key={u._id} className="bg-gray-200 p-2 m-1 rounded">
+                      {/* Replace UserBadgeItem with your custom component */}
+                      {u.username}
+                      <button onClick={() => handleDelete(u)}>Remove</button>
+                    </div>
+                  ))}
+                </div>
+                {loading ? <div>Loading...</div> : 
+                  searchResult
+                    ?.slice(0, 4)
+                    .map((user) => (
+                      <div key={user._id} className="bg-gray-100 p-2 m-1 rounded">
+                        {/* Replace UserListItem with your custom component */}
+                        {user.username}
+                        <button onClick={() => handleGroup(user)}>Add</button>
+                      </div>
+                    ))
+                }
+              </div>
+            </div>
+
+            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+              <button onClick={handleSubmit} className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
                 Create Chat
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-      </>
+              </button>
+              <button onClick={onClose} className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
     );
   };
   

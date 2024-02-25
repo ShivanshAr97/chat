@@ -4,8 +4,8 @@ import {
   isSameSender,
   isSameSenderMargin,
   isSameUser,
-} from "../config/ChatLogics";
-import { ChatState } from "../Context/ChatProvider";
+} from "../assets/chatLogics.js"
+import { ChatState } from "../context/ChatProvider";
 
 
 const Scroll = ({messages}) => {

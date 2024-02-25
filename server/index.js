@@ -6,7 +6,9 @@ const connectDatabase = require("./config/db");
 const UserRoutes = require('./routes/UserRoutes')
 const chatRoutes = require('./routes/chatRoutes')
 const messageRoutes = require('./routes/messageRoutes')
-const { notFound, errorHandler } = require("./middlewares/errorMiddleware")
+// const { notFound, errorHandler } = require("./middlewares/errorMiddleware")
+const { Server } = require("socket.io");
+const { createServer } = require("http")
 
 dotenv.config();
 connectDatabase()
@@ -33,17 +35,18 @@ app.get("/", (req, res) => {
     res.send("Hello")
 })
 
-const server = app.listen(port, () => {
-    console.log(`Listening on port: ${port}`);
-})
-
-const io = require("socket.io")(server, {
+const server = createServer(app)
+const io = new Server(server, {
     pingTimeout: 60000,
     cors: {
-        origin: "http://localhost:3000",
-        // credentials: true,
-    },
-});
+        origin: "http://localhost:5173",
+        credentials: true
+    }
+})
+
+server.listen(port, () => {
+    console.log(`Listening on port: ${port}`);
+})
 
 io.on("connection", (socket) => {
     console.log("Connected to socket.io");
