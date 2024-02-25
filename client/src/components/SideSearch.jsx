@@ -1,20 +1,56 @@
 import React, { useState } from 'react'
 import { ChatState } from '../context/ChatProvider'
 import { useNavigate } from 'react-router-dom'
+import axios from axios
+import ChatLoading from '../components/ChatLoading'
+import SingleModal from '../components/SingleModal'
+import getSender from '../assets/chatLogics.js'
+import UserList from '../components/UserList.jsx'
+import { ChatState } from '../context/ChatProvider'
 
 const SideSearch = () => {
 
     const [search, setSearch] = useState("")
     const [searchList, setSearchList] = useState([])
     const [loading,setLoading] = useState(false)
+    const [loadingChat, setLoadingChat] = useState(false);
     const navigate = useNavigate();
 
-    const {user} = ChatState()
+    const {
+      setSelectedChat,
+      user,
+      notification,
+      setNotification,
+      chats,
+      setChats,
+    } = ChatState();
 
     const logout=()=>{
       localStorage.removeItem("userInfo")
       navigate("/")
     }
+
+    const handleSearch = async () => {
+      if (!search) {
+        console.log("Please Enter something in search");
+        return;
+      }
+  
+      try {
+        setLoading(true);
+        const config = {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        };
+        const { data } = await axios.get(`/api/user?search=${search}`, config);
+  
+        setLoading(false);
+        setSearchResult(data);
+      } catch (error) {
+        console.log("Failed to Load the Search Results", error);
+      }
+    };
 
   return (
 
