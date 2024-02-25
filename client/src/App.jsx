@@ -14,11 +14,10 @@ function App() {
       <Routes>
         <Route path='/' element={<Homepage/>} />
         <Route path='/chats' element={<ChatPage/>} />
-        <Route path='/about' element={<About />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
+        {/* <Route path='/about' element={<About />} /> */}
+        {/* <Route path='/login' element={<Login />} /> */}
+        {/* <Route path='/register' element={<Register />} /> */}
       </Routes>
-      <p className="bg-green-500">Lorem ipsum dolor sit amet.</p>
     </>
   )
 }
