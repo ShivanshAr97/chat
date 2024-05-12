@@ -4,7 +4,7 @@ const User = require("../models/userModel");
 const Chat = require("../models/chatModel");
 
 const sendMessage = asyncHandler(async (req, res) => {
-    const { content, chatID } = req.body()
+    const { content, chatID } = req.body
     if (!content || !chatID) {
         console.log("Enter ID or Content");
         return res.status(400)
@@ -16,7 +16,7 @@ const sendMessage = asyncHandler(async (req, res) => {
     }
     try {
         var message = await Message.create(newMessage)
-        message = await message.populate("sender picture")
+        message = await message.populate("sender content")
         message = await message.populate("chat")
         message = await User.populate(message, {
             path: "chat.users",
@@ -34,7 +34,7 @@ const sendMessage = asyncHandler(async (req, res) => {
 
 const allMessages = asyncHandler(async (req, res) => {
     try {
-        const messages = await Message.find({ chat: req.params.chatID }).populate("sender", "name pic email").populate("chat")
+        const messages = await Message.find({ chat: req.params.chatID }).populate("sender", "name picture email").populate("chat")
         res.json(messages)
     } catch (error) {
         res.status(400)

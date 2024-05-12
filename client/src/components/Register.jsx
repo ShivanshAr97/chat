@@ -82,16 +82,48 @@ const Register = () => {
 
 
   return (
-    <>
-    <form>
-    <input type="text" placeholder='Name' onChange={(e)=>setName(e.target.value)}  />
-    <input type="email" placeholder='Email' onChange={(e)=>setEmail(e.target.value)}  />
-    <input type={show?"text":"password"} placeholder='Password' onChange={(e)=>setPassword(e.target.value)}  />
-    <button className='' onClick={clickedFunc}>{show?"Hide":"Show"}</button>
-    <input type="file" accept='image/*' onChange={(e)=>pictureFunc(e.target.files[0])} />
-    </form>
-    <button type='submit' onClick={submitFunc}>Sign In</button>
-    </>
+<>
+  <form className="max-w-sm mx-auto">
+    <input
+      type="text"
+      placeholder="Name"
+      onChange={(e) => setName(e.target.value)}
+      className="mt-4 p-2 block w-full border rounded-md focus:outline-none focus:border-blue-500"
+    />
+    <input
+      type="email"
+      placeholder="Email"
+      onChange={(e) => setEmail(e.target.value)}
+      className="mt-4 p-2 block w-full border rounded-md focus:outline-none focus:border-blue-500"
+    />
+    <input
+      type={show ? "text" : "password"}
+      placeholder="Password"
+      onChange={(e) => setPassword(e.target.value)}
+      className="mt-4 p-2 block w-full border rounded-md focus:outline-none focus:border-blue-500"
+    />
+    <button
+      className="mt-4 p-2 block w-full bg-blue-500 text-white rounded-md focus:outline-none focus:bg-blue-600"
+      onClick={clickedFunc}
+    >
+      {show ? "Hide" : "Show"}
+    </button>
+    <input
+      type="file"
+      accept="image/*"
+      onChange={(e) => pictureFunc(e.target.files[0])}
+      className="mt-4 p-2 block w-full border rounded-md focus:outline-none focus:border-blue-500"
+    />
+  </form>
+  <button
+    type="submit"
+    onClick={submitFunc}
+    className="mt-4 p-2 block w-full bg-blue-500 text-white rounded-md focus:outline-none focus:bg-blue-600"
+  >
+    Sign In
+  </button>
+</>
+
   )
 }
 

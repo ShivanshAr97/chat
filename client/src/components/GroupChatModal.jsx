@@ -51,13 +51,8 @@
   
     const handleSubmit = async () => {
       if (!groupChatName || !selectedUsers) {
-        toast({
-          title: "Please fill all the feilds",
-          status: "warning",
-          duration: 5000,
-          isClosable: true,
-          position: "top",
-        });
+        console.log("Please fill all the fields");
+        
         return;
       }
   
@@ -127,7 +122,7 @@
                   {selectedUsers.map((u) => (
                     <div key={u._id} className="bg-gray-200 p-2 m-1 rounded">
                       {/* Replace UserBadgeItem with your custom component */}
-                      {u.username}
+                      {u.name}
                       <button onClick={() => handleDelete(u)}>Remove</button>
                     </div>
                   ))}
@@ -135,11 +130,11 @@
                 {loading ? <div>Loading...</div> : 
                   searchResult
                     ?.slice(0, 4)
-                    .map((user) => (
-                      <div key={user._id} className="bg-gray-100 p-2 m-1 rounded">
+                    .map((data) => (
+                      <div key={data._id} className="bg-gray-100 p-2 m-1 rounded">
                         {/* Replace UserListItem with your custom component */}
-                        {user.username}
-                        <button onClick={() => handleGroup(user)}>Add</button>
+                        {data.name}
+                        <button className="border px-2" onClick={() => handleGroup(data)}>Add</button>
                       </div>
                     ))
                 }
