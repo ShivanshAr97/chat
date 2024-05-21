@@ -34,30 +34,51 @@ export default function ChatContainer({ currentChat, socket }) {
     getCurrentChat();
   }, [currentChat]);
 
-  const handleSendMsg = async (msg) => {
+  const handleSendMsg = async (msg1, msg2) => {
     const data = await JSON.parse(
       localStorage.getItem(import.meta.env.VITE_LOCALHOST_KEY)
     );
-    socket.current.emit("send-msg", {
-      to: currentChat._id,
-      from: data._id,
-      msg,
-    });
+    if (currentChat.username === "ConvoAI") {
+      console.log("Using AI integration for ConvoAI");
+      try {
+        const response = await axios({
+          url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${
+            import.meta.env.VITE_GENERATIVE_LANGUAGE_CLIENT
+          }`,
+          method: "post",
+          data: {
+            contents: [{ parts: [{ text: msg1 }] }],
+          },
+        });
+        msg2 = response["data"]["candidates"][0]["content"]["parts"][0]["text"];
+        console.log(msg2);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      socket.current.emit("send-msg", {
+        to: currentChat._id,
+        from: data._id,
+        msg1,
+      });
+    }
     await axios.post(sendMessageRoute, {
       from: data._id,
       to: currentChat._id,
-      message: msg,
+      message: msg1,
     });
 
     const msgs = [...messages];
-    msgs.push({ fromSelf: true, message: msg });
+    msgs.push({ fromSelf: true, message: msg1 });
+    setMessages(msgs);
+    msgs.push({ fromSelf: true, message: msg2 });
     setMessages(msgs);
   };
 
   useEffect(() => {
     if (socket.current) {
-      socket.current.on("msg-recieve", (msg) => {
-        setArrivalMessage({ fromSelf: false, message: msg });
+      socket.current.on("msg-recieve", (msg1) => {
+        setArrivalMessage({ fromSelf: false, message: msg1 });
       });
     }
   }, []);
@@ -75,14 +96,13 @@ export default function ChatContainer({ currentChat, socket }) {
       <div className="border">
         <div className="flex border border-red-700 items-center justify-between w-[75rem]">
           <div className="flex items-center gap-4 mx-4">
-            
-          <img
-            className="w-16 h-16 rounded-full border border-black"
-            src={currentChat.avatarImage}
-            alt=""
+            <img
+              className="w-16 h-16 rounded-full border border-black"
+              src={currentChat.avatarImage}
+              alt=""
             />
-          <h3>{currentChat.username}</h3>
-            </div>
+            <h3>{currentChat.username}</h3>
+          </div>
           <Logout />
         </div>
         <div className="h-[32rem]">
@@ -102,7 +122,7 @@ export default function ChatContainer({ currentChat, socket }) {
             );
           })}
         </div>
-      <ChatInput handleSendMsg={handleSendMsg} />
+        <ChatInput handleSendMsg={handleSendMsg} />
       </div>
     </>
   );
