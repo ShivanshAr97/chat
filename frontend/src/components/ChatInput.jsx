@@ -21,7 +21,6 @@ export default function ChatInput({ handleSendMsg }) {
           contents: [{ parts: [{ text: msg1 }] }],
         },
       });
-      msg2 = response["data"]["candidates"][0]["content"]["parts"][0]["text"];
       console.log(
         response["data"]["candidates"][0]["content"]["parts"][0]["text"]
       );
@@ -32,11 +31,11 @@ export default function ChatInput({ handleSendMsg }) {
 
   const sendChat = (event) => {
     event.preventDefault();
-    generateAnswer(event);
+    // generateAnswer(event);
     if (msg1.length > 0) {
       handleSendMsg(msg1, msg2);
       setMsg1("");
-      setMsg2("");
+      // setMsg2("");
     }
   };
 
