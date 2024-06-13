@@ -4,6 +4,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
 import { setAvatarRoute } from "../utils/APIRoutes";
+import { IoReload } from "react-icons/io5";
 import Loader from "./Loader";
 
 export default function SetAvatar() {
@@ -26,6 +27,10 @@ export default function SetAvatar() {
         navigate("/login");
     })();
   }, []);
+
+  const refresh=()=>{
+    window.location.reload();
+  }
 
   const setProfilePicture = async () => {
     if (selectedAvatar === undefined) {
@@ -74,10 +79,11 @@ export default function SetAvatar() {
         <Loader />
       ) : (
         <>
-          <div className="">
+          <div className="text-2xl my-8 mx-4 flex justify-between">
             <h1>Pick an Avatar as your profile picture</h1>
+            <button onClick={refresh}><IoReload /></button>
           </div>
-          <div className="avatars">
+          <div className="avatars flex gap-4 m-4">
             {avatars.map((avatar, index) => {
               return (
                 <div key={index}
@@ -86,6 +92,7 @@ export default function SetAvatar() {
                   }`}
                 >
                   <img
+                  className="w-52 border rounded-full cursor-pointer"
                     src={`${avatar}`}
                     alt="avatar"
                     key={avatar}
@@ -95,7 +102,7 @@ export default function SetAvatar() {
               );
             })}
           </div>
-          <button onClick={setProfilePicture} className="">
+          <button onClick={setProfilePicture} className="border mx-auto w-fit px-4 py-2 flex my-8 text-white bg-green-500 rounded-md">
             Set as Profile Picture
           </button>
           <ToastContainer />

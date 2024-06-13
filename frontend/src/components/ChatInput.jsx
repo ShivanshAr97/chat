@@ -42,17 +42,17 @@ export default function ChatInput({ handleSendMsg }) {
   return (
     <>
       <form onSubmit={(event) => sendChat(event)}>
-        <button>
-          <IoMdAttach />
+        <button className="mx-4">
+          <IoMdAttach size={24}/>
         </button>
         <input
-          className="border-2 text-xl py-2 px-4 rounded-lg w-[80%]"
+          className="border-2 outline-none py-2 px-4 rounded-lg w-[88%]"
           type="text"
           placeholder="Type your message here"
           onChange={(e) => setMsg1(e.target.value)}
           value={msg1}
         />
-        <button className="bg-blue-400 p-3 rounded-full mx-4" type="submit">
+        <button className="bg-blue-400 p-3 rounded-full mx-2" type="submit">
           <IoMdSend size={20} />
         </button>
       </form>

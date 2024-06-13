@@ -4,6 +4,7 @@ import Logout from "./Logout";
 import { v4 as uuidv4 } from "uuid";
 import axios from "axios";
 import { sendMessageRoute, recieveMessageRoute } from "../utils/APIRoutes";
+import Call from "./Call";
 
 export default function ChatContainer({ currentChat, socket }) {
   const [messages, setMessages] = useState([]);
@@ -75,6 +76,9 @@ export default function ChatContainer({ currentChat, socket }) {
     setMessages(msgs);
   };
 
+  // console.log(currentChat);
+
+  // console.log(messages);
   useEffect(() => {
     if (socket.current) {
       socket.current.on("msg-recieve", (msg1) => {
@@ -93,30 +97,37 @@ export default function ChatContainer({ currentChat, socket }) {
 
   return (
     <>
-      <div className="border">
-        <div className="flex border border-red-700 items-center justify-between w-[75rem]">
+      <div className="">
+        <div className="flex border-red-700 items-center justify-between w-[74.5rem]">
           <div className="flex items-center gap-4 mx-4">
             <img
-              className="w-16 h-16 rounded-full border border-black"
+              className="w-16 h-16 rounded-full border my-2"
               src={currentChat.avatarImage}
               alt=""
             />
             <h3>{currentChat.username}</h3>
           </div>
-          <Logout />
+          <Call />
         </div>
-        <div className="h-[32rem]">
+        <div className="border-b shadow-sm"></div>
+        <div className="h-[31rem] overflow-y-scroll">
           {messages.map((message) => {
             return (
               <div ref={scrollRef} key={uuidv4()}>
                 <div
                   className={`message ${
-                    message.fromSelf ? "sended" : "recieved"
+                    message.fromSelf ? "sended" : "received"
                   }`}
                 >
-                  <div className=" ">
-                    <p>{message.message}</p>
-                  </div>
+                  {message.fromSelf ? (
+                    <div className="justify-end flex">
+                      <p className=" bg-blue-300 items-end  my-2 mx-2 rounded-md  w-fit px-4 py-1">{message.message}</p>
+                    </div>
+                  ) : (
+                    <p className="items-end  my-2 mx-2 rounded-md  w-fit px-4 py-1 bg-gray-200  flex">
+                      {message.message}
+                    </p>
+                  )}
                 </div>
               </div>
             );

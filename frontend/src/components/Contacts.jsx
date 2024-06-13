@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Contacts({ contacts, changeChat }) {
   const [currentUserName, setCurrentUserName] = useState(undefined);
   const [currentUserImage, setCurrentUserImage] = useState(undefined);
   const [currentSelected, setCurrentSelected] = useState(undefined);
+const navigate = useNavigate()
+  const changeAvatar=()=>{
+    navigate('/setavatar')
+  }
 
   useEffect(() => {
     (async () => {
@@ -21,9 +26,10 @@ export default function Contacts({ contacts, changeChat }) {
   };
   return (
     <div className="h-[40rem] border w-[20rem]">
+      <p className="p-4">Search</p>
       {currentUserImage && currentUserImage && (
         <>
-          <div className="h-[35.5rem]">
+          <div className="h-[31.5rem] w-[20rem] overflow-y-scroll">
             {contacts.map((contact, index) => {
               return (
                 <div
@@ -34,7 +40,7 @@ export default function Contacts({ contacts, changeChat }) {
                   onClick={() => changeCurrentChat(index, contact)}
                 >
                     <img
-                    className="w-16 rounded-full border border-black"
+                    className="w-20 rounded-full border border-black"
                       src={contact.avatarImage}
                       // src={`data:image/svg+xml;base64,${contact.avatarImage}`}
                       alt=""
@@ -44,11 +50,10 @@ export default function Contacts({ contacts, changeChat }) {
               );
             })}
           </div>
-          <div className="flex items-center px-4 py-2 gap-4 bg-blue-300">
-            <img
-              className="w-16 rounded-full border border-black"
+          <div className="flex items-center px-4 py-2 gap-4 bg-blue-300 z-20">
+            <img onClick={changeAvatar}
+              className="w-16 cursor-pointer rounded-full border border-black"
               src={currentUserImage}
-              // src={`data:image/svg+xml;base64,${currentUserImage}`}
               alt="avatar"
             />
               <h2>{currentUserName}</h2>
