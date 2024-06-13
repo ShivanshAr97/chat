@@ -76,9 +76,9 @@ export default function ChatContainer({ currentChat, socket }) {
     setMessages(msgs);
   };
 
-  // console.log(currentChat);
+  console.log(currentChat);
 
-  // console.log(messages);
+  console.log(messages);
   useEffect(() => {
     if (socket.current) {
       socket.current.on("msg-recieve", (msg1) => {
@@ -103,6 +103,7 @@ export default function ChatContainer({ currentChat, socket }) {
             <img
               className="w-16 h-16 rounded-full border my-2"
               src={currentChat.avatarImage}
+              // src={currentChat.otherUserDetails.avatarImage}
               alt=""
             />
             <h3>{currentChat.username}</h3>

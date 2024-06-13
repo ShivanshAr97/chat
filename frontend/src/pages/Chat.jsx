@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
-import { allUsersRoute, host } from "../utils/APIRoutes";
+import { allUsersRoute, allUserDataRoute, host } from "../utils/APIRoutes";
 import ChatContainer from "../components/ChatContainer";
 import Contacts from "../components/Contacts";
 import Welcome from "../components/Welcome";
@@ -12,6 +12,7 @@ export default function Chat() {
   const navigate = useNavigate();
   const socket = useRef();
   const [contacts, setContacts] = useState([]);
+  const [latestMessage, setLatestMessage] = useState([])
   const [currentChat, setCurrentChat] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
 
@@ -41,7 +42,20 @@ export default function Chat() {
       if (currentUser) {
         if (currentUser.isAvatarImageSet) {
           const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
-          setContacts(data.data);
+          setContacts(data.data)
+        } else {
+          navigate("/setavatar");
+        }
+      }
+    })();
+  }, [currentUser]);
+
+  useEffect(() => {
+    (async () => {
+      if (currentUser) {
+        if (currentUser.isAvatarImageSet) {
+          const data = await axios.get(`${allUserDataRoute}/${currentUser._id}`);
+          setLatestMessage(data.data)
         } else {
           navigate("/setavatar");
         }
@@ -57,7 +71,7 @@ export default function Chat() {
     
     <Header/>
       <div className="flex border">
-        <Contacts className="" contacts={contacts} changeChat={handleChatChange} />
+        <Contacts className="" contacts={contacts} latestMessage={latestMessage} changeChat={handleChatChange} />
         {currentChat === undefined ? (
           <Welcome className="" />
         ) : (
