@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import SearchContact from "./SearchContact";
 
 export default function Contacts({ contacts, latestMessage, changeChat }) {
   const [currentUserName, setCurrentUserName] = useState(undefined);
   const [currentUserImage, setCurrentUserImage] = useState(undefined);
   const [currentSelected, setCurrentSelected] = useState(undefined);
-  console.log({ contacts, latestMessage });
+  // console.log({ contacts, latestMessage, changeChat });
   const navigate = useNavigate();
   const changeAvatar = () => {
     navigate("/setavatar");
@@ -27,15 +28,20 @@ export default function Contacts({ contacts, latestMessage, changeChat }) {
   };
   return (
     <div className="h-[40rem] border w-[20rem]">
-      <p className="p-4">Search</p>
+      
+      <SearchContact contacts={contacts} changeChat={changeChat} />
+
       {currentUserImage && currentUserImage && (
         <>
           <div className="h-[31.5rem] w-[20rem] overflow-y-scroll">
-            {contacts.map((contact, index) => {
+            {latestMessage.map((message, index) => {
+              const contact = contacts.find(
+                (contact) => contact._id === message.otherUserDetails._id
+              );
+
               return (
                 <div
-                  key={contact._id}
-                  // key={contact.otherUserDetails._id}
+                  key={message._id}
                   className={`flex items-center gap-4 border py-2 px-4 ${
                     index === currentSelected ? "selected" : ""
                   }`}
@@ -43,12 +49,17 @@ export default function Contacts({ contacts, latestMessage, changeChat }) {
                 >
                   <img
                     className="w-20 rounded-full border"
-                    // src={contact.otherUserDetails.avatarImage}
-                    src={contact.avatarImage}
+                    src={contact?.avatarImage}
                     alt=""
                   />
-                  <h3>{contact.username}</h3>
-                  {/* <h3>{contact.otherUserDetails.username}</h3> */}
+                  <h3>{contact?.username}</h3>
+                  <div className="flex flex-col">
+                    <p>{message.message.text}</p>
+                    <p>
+                      time{new Date(message.updatedAt).getHours()}:
+                      {new Date(message.updatedAt).getMinutes()}
+                    </p>
+                  </div>
                 </div>
               );
             })}
