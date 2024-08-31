@@ -85,7 +85,7 @@ export default function Register() {
 
   return (
     <>
-    <Header/>
+      <Header />
       <form action="" onSubmit={(event) => handleSubmit(event)}>
         <div className="flex mt-20 flex-col w-[50%] lg:w-[30%] mx-auto gap-8">
           <input
